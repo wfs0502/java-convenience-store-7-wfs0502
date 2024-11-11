@@ -24,6 +24,10 @@ public class Product {
         promotionQuantity += quantity;
     }
 
+    public boolean hasSufficientStock(int quantity) {
+        return promotionQuantity + generalQuantity >= quantity;
+    }
+
     public String getName() {
         return name;
     }

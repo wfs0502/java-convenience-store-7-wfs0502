@@ -25,12 +25,12 @@ public class StoreController {
         outputView.printProducts(products);
 
         while (true) {
-            Purchase purchase = new Purchase(getValidInput());
+            Purchase purchase = new Purchase(promptForPurchaseItems());
             processPurchase(purchase);
         }
     }
 
-    private Map<String, Integer> getValidInput() {
+    private Map<String, Integer> promptForPurchaseItems() {
         while (true) {
             try {
                 return inputView.readItem();

@@ -31,6 +31,7 @@ public class OrderService {
 
     public void order(ProductOrders productOrders) {
         int totalAmount = 0;
+        int totalQuantity = 0;
         int promotionDiscount = 0;
         int membershipDiscount = 0;
         int nonPromotionAmount = 0;
@@ -44,9 +45,12 @@ public class OrderService {
 
             int productTotal = product.getPrice() * quantity;
             totalAmount += productTotal;
+            totalQuantity += quantity;
+
+            productDetails.add(String.format("%s\t\t%d\t%,d", product.getName(), quantity, productTotal));
 
             if (isPromotionAvailable(product)) {
-                promotionDiscount += applyPromotionDiscount(product, quantity);
+                promotionDiscount += applyPromotionDiscount(product, quantity, freeItems);
             }
             if (!isPromotionAvailable(product)) {
                 product.decreaseGeneralStock(quantity);
@@ -55,13 +59,13 @@ public class OrderService {
         }
 
         boolean applyMembership = promptForMembership();
-
         if (applyMembership) {
             membershipDiscount = calculateMembershipDiscount(nonPromotionAmount);
         }
 
         int finalAmount = totalAmount - promotionDiscount - membershipDiscount;
-        outputOrderSummary(productDetails, freeItems, totalAmount, promotionDiscount, membershipDiscount, finalAmount);
+        outputOrderSummary(productDetails, freeItems, totalQuantity, totalAmount, promotionDiscount, membershipDiscount,
+                finalAmount);
     }
 
     private boolean isPromotionAvailable(Product product) {
@@ -79,17 +83,25 @@ public class OrderService {
         return inputView.readYesOrNo().equals("Y");
     }
 
-    private int applyPromotionDiscount(Product product, int requestedQuantity) {
+    private int applyPromotionDiscount(Product product, int requestedQuantity, List<String> freeItems) {
         Promotion promotion = promotions.findPromotionByName(product.getPromotion());
+
+        int buyQuantity = promotion.getBuyQuantity();
+        int promotionFreeQuantity = promotion.getFreeQuantity();
+        int promotionUnit = buyQuantity + promotionFreeQuantity;
+
+        int promotionUnits = requestedQuantity / promotionUnit;
+        int totalFreeQuantity = promotionUnits * promotionFreeQuantity;
 
         int applicablePromotionQuantity = applyApplicablePromotion(product, requestedQuantity, promotion);
         int freeQuantity = applicablePromotionQuantity / (promotion.getBuyQuantity() + promotion.getFreeQuantity());
         int basicDiscount = freeQuantity * product.getPrice();
-
         int remainingQuantity = requestedQuantity - applicablePromotionQuantity;
 
         boolean extraItemPrompted = offerExtraItemsIfAvailable(product, requestedQuantity, promotion);
-
+        if (totalFreeQuantity > 0) {
+            freeItems.add(String.format("%s\t\t%d", product.getName(), totalFreeQuantity));
+        }
         if (remainingQuantity > 0 && !extraItemPrompted) {
             handleRemainingQuantity(product, remainingQuantity);
         }
@@ -181,8 +193,9 @@ public class OrderService {
         }
     }
 
-    private void outputOrderSummary(List<String> productDetails, List<String> freeItems, int totalAmount,
-                                    int promotionDiscount, int membershipDiscount, int finalAmount) {
-        outputView.printOrderSummary(productDetails, freeItems, totalAmount, promotionDiscount, membershipDiscount, finalAmount);
+    private void outputOrderSummary(List<String> productDetails, List<String> freeItems, int totalQuantity,
+                                    int totalAmount, int promotionDiscount, int membershipDiscount, int finalAmount) {
+        outputView.printOrderSummary(productDetails, freeItems, totalQuantity, totalAmount, promotionDiscount,
+                membershipDiscount, finalAmount);
     }
 }

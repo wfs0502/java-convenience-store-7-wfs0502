@@ -24,11 +24,20 @@ public class StoreController {
     }
 
     public void run() {
-        outputView.printWelcomeMessage();
-        outputView.printProducts(products);
+        while (true) {
+            outputView.printWelcomeMessage();
+            outputView.printProducts(products);
 
-        ProductOrders productOrders = promptForValidProductOrders();
-        orderService.order(productOrders);
+            ProductOrders productOrders = promptForValidProductOrders();
+            orderService.order(productOrders);
+
+            outputView.printContinueMessage();
+            String userChoice = inputView.readYesOrNo();
+
+            if (userChoice.equals("N")) {
+                break;
+            }
+        }
 
     }
 

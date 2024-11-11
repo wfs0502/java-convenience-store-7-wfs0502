@@ -54,9 +54,8 @@ public class InputView {
             String input = Console.readLine().trim();
             if (input.equals("Y") || input.equals("N")) {
                 return input;
-            } else {
-                System.out.println(INVALID_INPUT_ERROR);
             }
+            System.out.println(INVALID_INPUT_ERROR);
         }
     }
 }

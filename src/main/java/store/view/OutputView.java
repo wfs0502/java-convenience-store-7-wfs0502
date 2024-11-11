@@ -9,6 +9,8 @@ public class OutputView {
     private static final String INVENTORY_HEADER = "현재 보유하고 있는 상품입니다.";
     private static final String PROMOTION_STOCK_MESSAGE = "- %s %,d원 %s %s%n";
     private static final String GENERAL_STOCK_MESSAGE = "- %s %,d원 %s%n";
+    private static final String REGULAR_PRICE_MESSAGE = "현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)%n";
+    private static final String EXTRA_ITEMS_MESSAGE = "현재 %s은(는) %d개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)";
     private static final String NO_STOCK = "재고 없음";
     private static final String QUANTITY_UNIT = "개";
 
@@ -51,6 +53,14 @@ public class OutputView {
             promotion = "";
         }
         return promotion;
+    }
+
+    public void printForRegularPrice(String name, int quantity) {
+        System.out.printf(REGULAR_PRICE_MESSAGE, name, quantity);
+    }
+
+    public void printForExtraItems(String name, int quantity) {
+        System.out.printf(EXTRA_ITEMS_MESSAGE, name, quantity);
     }
 
     public void printErrorMessage(String message) {

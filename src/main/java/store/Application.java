@@ -17,7 +17,7 @@ public class Application {
         PromotionLoader promotionLoader = new PromotionLoader();
         Promotions promotions = promotionLoader.load();
 
-        StoreController storeController = new StoreController(inputView, outputView, products);
+        StoreController storeController = new StoreController(inputView, outputView, products, promotions);
 
         storeController.run();
     }

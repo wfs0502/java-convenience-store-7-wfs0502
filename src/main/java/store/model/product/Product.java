@@ -28,6 +28,18 @@ public class Product {
         return promotionQuantity + generalQuantity >= quantity;
     }
 
+    public boolean hasSufficientPromotionStock(int quantity) {
+        return promotionQuantity >= quantity;
+    }
+
+    public void decreasePromotionStock(int quantity) {
+        promotionQuantity -= quantity;
+    }
+
+    public void decreaseGeneralStock(int quantity) {
+        generalQuantity -= quantity;
+    }
+
     public String getName() {
         return name;
     }

@@ -3,6 +3,7 @@ package store.controller;
 import java.util.Map;
 import store.model.product.Products;
 import store.model.order.ProductOrders;
+import store.model.promotion.Promotions;
 import store.service.OrderService;
 import store.view.InputView;
 import store.view.OutputView;
@@ -11,13 +12,15 @@ public class StoreController {
     private final InputView inputView;
     private final OutputView outputView;
     private final Products products;
+    private final Promotions promotions;
     private final OrderService orderService;
 
-    public StoreController(InputView inputView, OutputView outputView, Products products) {
+    public StoreController(InputView inputView, OutputView outputView, Products products, Promotions promotions) {
         this.inputView = inputView;
         this.outputView = outputView;
         this.products = products;
-        this.orderService = new OrderService(products);
+        this.promotions = promotions;
+        this.orderService = new OrderService(products, promotions, inputView, outputView);
     }
 
     public void run() {
@@ -25,26 +28,16 @@ public class StoreController {
         outputView.printProducts(products);
 
         while (true) {
-            ProductOrders productOrders = createProductOrders();
+            ProductOrders productOrders = promptForValidProductOrders();
             orderService.order(productOrders);
         }
     }
 
-    private Map<String, Integer> promptForOrderItems() {
+    private ProductOrders promptForValidProductOrders() {
         while (true) {
             try {
-                return inputView.readItem();
-            } catch (IllegalArgumentException e) {
-                outputView.printErrorMessage(e.getMessage());
-            }
-        }
-    }
-
-    private ProductOrders createProductOrders() {
-        while (true) {
-            try {
-                Map<String, Integer> orderItems = promptForOrderItems();
-                return orderService.createProductOrders(orderItems);
+                Map<String, Integer> productOrders = inputView.readItem();
+                return orderService.createProductOrders(productOrders);
             } catch (IllegalArgumentException e) {
                 outputView.printErrorMessage(e.getMessage());
             }

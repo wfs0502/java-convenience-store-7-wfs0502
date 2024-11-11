@@ -9,16 +9,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import store.model.product.ProductLoader;
 import store.model.product.Products;
+import store.model.promotion.PromotionLoader;
+import store.model.promotion.Promotions;
+import store.view.InputView;
+import store.view.OutputView;
 
-public class ProductOrdersServiceTest {
+public class OrderServiceTest {
     private OrderService orderService;
 
     @BeforeEach
     void setUp() {
         ProductLoader productLoader = new ProductLoader();
+        PromotionLoader promotionLoader = new PromotionLoader();
         Products products = productLoader.load();
+        Promotions promotions = promotionLoader.load();
+        InputView inputView = new InputView();
+        OutputView outputView = new OutputView();
 
-        orderService = new OrderService(products);
+        orderService = new OrderService(products, promotions, inputView, outputView);
     }
 
     @Test
@@ -42,7 +50,7 @@ public class ProductOrdersServiceTest {
     }
 
     @Test
-    void 존재하지_않는_상품을_입력하면_오류가_발생한다() {
+    void 존재하지_않는_상품을_주문하면_오류가_발생한다() {
         Map<String, Integer> items = new HashMap<>();
         items.put("포도주스", 2);
 

@@ -27,10 +27,9 @@ public class StoreController {
         outputView.printWelcomeMessage();
         outputView.printProducts(products);
 
-        while (true) {
-            ProductOrders productOrders = promptForValidProductOrders();
-            orderService.order(productOrders);
-        }
+        ProductOrders productOrders = promptForValidProductOrders();
+        orderService.order(productOrders);
+
     }
 
     private ProductOrders promptForValidProductOrders() {

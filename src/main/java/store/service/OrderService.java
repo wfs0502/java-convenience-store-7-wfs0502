@@ -1,6 +1,8 @@
 package store.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import store.model.product.Product;
 import store.model.product.Products;
@@ -31,6 +33,10 @@ public class OrderService {
         int totalAmount = 0;
         int promotionDiscount = 0;
         int membershipDiscount = 0;
+        int nonPromotionAmount = 0;
+
+        List<String> productDetails = new ArrayList<>();
+        List<String> freeItems = new ArrayList<>();
 
         for (Map.Entry<Product, Integer> entry : productOrders.getItems().entrySet()) {
             Product product = entry.getKey();
@@ -44,9 +50,18 @@ public class OrderService {
             }
             if (!isPromotionAvailable(product)) {
                 product.decreaseGeneralStock(quantity);
-                membershipDiscount += applyMembershipDiscount(productTotal);
+                nonPromotionAmount += productTotal;
             }
         }
+
+        boolean applyMembership = promptForMembership();
+
+        if (applyMembership) {
+            membershipDiscount = calculateMembershipDiscount(nonPromotionAmount);
+        }
+
+        int finalAmount = totalAmount - promotionDiscount - membershipDiscount;
+        outputOrderSummary(productDetails, freeItems, totalAmount, promotionDiscount, membershipDiscount, finalAmount);
     }
 
     private boolean isPromotionAvailable(Product product) {
@@ -54,12 +69,9 @@ public class OrderService {
         return promotion != null && promotion.isPromotionActive();
     }
 
-    private int applyMembershipDiscount(int nonPromotionTotal) {
-        if (promptForMembership()) {
-            int membershipDiscount = (int) (nonPromotionTotal * MEMBERSHIP_DISCOUNT_RATE);
-            return Math.min(membershipDiscount, MAX_MEMBERSHIP_DISCOUNT);
-        }
-        return 0;
+    private int calculateMembershipDiscount(int nonPromotionTotal) {
+        int discount = (int) (nonPromotionTotal * MEMBERSHIP_DISCOUNT_RATE);
+        return Math.min(discount, MAX_MEMBERSHIP_DISCOUNT);
     }
 
     private boolean promptForMembership() {
@@ -74,18 +86,14 @@ public class OrderService {
         int freeQuantity = applicablePromotionQuantity / (promotion.getBuyQuantity() + promotion.getFreeQuantity());
         int basicDiscount = freeQuantity * product.getPrice();
 
-        int remainingQuantity = requestedQuantity - product.getPromotionQuantity();
-        if (remainingQuantity > 0) {
+        int remainingQuantity = requestedQuantity - applicablePromotionQuantity;
+
+        boolean extraItemPrompted = offerExtraItemsIfAvailable(product, requestedQuantity, promotion);
+
+        if (remainingQuantity > 0 && !extraItemPrompted) {
             handleRemainingQuantity(product, remainingQuantity);
         }
 
-        if (offerExtraItemsIfAvailable(product, requestedQuantity, promotion)) {
-            int extraFreeQuantity = calculateExtraFreeQuantity(requestedQuantity, promotion.getBuyQuantity(),
-                    promotion.getFreeQuantity(), product.getPromotionQuantity());
-            int extraFreeDiscount = product.getPrice() * extraFreeQuantity;
-
-            return basicDiscount + extraFreeDiscount;
-        }
         return basicDiscount;
     }
 
@@ -123,8 +131,10 @@ public class OrderService {
         int extraFreeQuantity = calculateExtraFreeQuantity(requestedQuantity, promotion.getBuyQuantity(),
                 promotion.getFreeQuantity(), product.getPromotionQuantity());
 
-        if (extraFreeQuantity > 0 && promptForExtraItems(product.getName(), extraFreeQuantity)) {
-            product.decreasePromotionStock(extraFreeQuantity);
+        if (extraFreeQuantity > 0) {
+            if (promptForExtraItems(product.getName(), extraFreeQuantity)) {
+                product.decreasePromotionStock(extraFreeQuantity);
+            }
             return true;
         }
         return false;
@@ -169,5 +179,10 @@ public class OrderService {
         if (!product.hasSufficientStock(quantity)) {
             throw new IllegalArgumentException(OVER_QUANTITY_ERROR);
         }
+    }
+
+    private void outputOrderSummary(List<String> productDetails, List<String> freeItems, int totalAmount,
+                                    int promotionDiscount, int membershipDiscount, int finalAmount) {
+        outputView.printOrderSummary(productDetails, freeItems, totalAmount, promotionDiscount, membershipDiscount, finalAmount);
     }
 }

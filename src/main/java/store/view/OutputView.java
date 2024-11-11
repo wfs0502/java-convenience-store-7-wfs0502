@@ -1,5 +1,6 @@
 package store.view;
 
+import java.util.List;
 import java.util.Objects;
 import store.model.product.Product;
 import store.model.product.Products;
@@ -70,5 +71,28 @@ public class OutputView {
 
     public void printErrorMessage(String message) {
         System.out.println(message);
+    }
+
+    public void printOrderSummary(List<String> productDetails, List<String> freeItems, int totalAmount,
+                                  int promotionDiscount, int membershipDiscount, int finalAmount) {
+        System.out.println("==============W 편의점================");
+        System.out.println("상품명\t\t수량\t금액");
+
+        for (String detail : productDetails) {
+            System.out.println(detail);
+        }
+
+        if (!freeItems.isEmpty()) {
+            System.out.println("=============증    정===============");
+            for (String freeItem : freeItems) {
+                System.out.println(freeItem);
+            }
+        }
+
+        System.out.println("====================================");
+        System.out.printf("총구매액\t\t%d\t%,d원\n", productDetails.size(), totalAmount);
+        System.out.printf("행사할인\t\t\t-%,d원\n", promotionDiscount);
+        System.out.printf("멤버십할인\t\t\t-%,d원\n", membershipDiscount);
+        System.out.printf("내실돈\t\t\t %,d원\n", finalAmount);
     }
 }

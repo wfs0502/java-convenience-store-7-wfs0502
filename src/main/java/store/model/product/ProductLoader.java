@@ -1,4 +1,4 @@
-package store.model;
+package store.model.product;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,10 +13,11 @@ public class ProductLoader {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             reader.readLine(); // 파일의 첫번째 줄은 건너뜀
             reader.lines().forEach(line -> updateProducts(products, line));
+
+            return products;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return products;
     }
 
     private void updateProducts(Products products, String line) {

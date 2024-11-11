@@ -1,4 +1,4 @@
-package store.model;
+package store.model.purchase;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import store.model.ProductLoader;
-import store.model.Products;
-import store.model.Purchase;
+import store.model.product.ProductLoader;
+import store.model.product.Products;
+import store.model.purchase.Purchase;
 
 public class PurchaseServiceTest {
     private PurchaseService purchaseService;

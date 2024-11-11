@@ -1,9 +1,9 @@
 package store.service;
 
 import java.util.Map;
-import store.model.Product;
-import store.model.Products;
-import store.model.Purchase;
+import store.model.product.Product;
+import store.model.product.Products;
+import store.model.purchase.Purchase;
 
 public class PurchaseService {
     private static final String NON_PRODUCT_ERROR = "[ERROR] 존재하지 않는 상품입니다. 다시 입력해 주세요.";

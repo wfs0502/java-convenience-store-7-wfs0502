@@ -1,8 +1,8 @@
 package store.view;
 
 import java.util.Objects;
-import store.model.Product;
-import store.model.Products;
+import store.model.product.Product;
+import store.model.product.Products;
 
 public class OutputView {
     private static final String WELCOME_MESSAGE = "안녕하세요. W편의점입니다.";

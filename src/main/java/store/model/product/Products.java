@@ -1,4 +1,4 @@
-package store.model;
+package store.model.product;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -12,7 +12,7 @@ public class Products {
     }
 
     public void addProduct(Product product) {
-        this.products.put(product.getName(), product);
+        products.put(product.getName(), product);
     }
 
     public Product findProductByName(String name) {

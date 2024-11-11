@@ -1,8 +1,8 @@
 package store.controller;
 
 import java.util.Map;
-import store.model.Products;
-import store.model.Purchase;
+import store.model.product.Products;
+import store.model.purchase.Purchase;
 import store.service.PurchaseService;
 import store.view.InputView;
 import store.view.OutputView;
